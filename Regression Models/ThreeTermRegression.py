@@ -6,17 +6,20 @@ from sklearn import linear_model
 from sklearn.metrics import mean_squared_error
 import pandas as pd
 
-csv_file_1 = "Southland - Perfomance.csv";
-csv_file_2 = "Sirisaman - Perfomance.csv";
+csv_file_1 = "Southland - Performance.csv";
+csv_file_2 = "Sirisaman - Performance.csv";
+
+path_1 = "/home/wolfpack/FYP/DDIS/Data/" + csv_file_1;
+path_2 = "/home/wolfpack/FYP/DDIS/Data/" + csv_file_2;
 
 subject = "English"
 
 # reading the csv file and selecting subject columns
-df1 = pd.read_csv(csv_file_1, header=1, usecols=[subject, subject + ".1", subject + ".2"]);
+df1 = pd.read_csv(path_1, header=1, usecols=[subject, subject + ".1", subject + ".2"]);
 df1.fillna(0, inplace=True);
 df1.replace('ab', 0, inplace=True);
 
-df2 = pd.read_csv(csv_file_2, header=1, usecols=[subject, subject + ".1", subject + ".2"]);
+df2 = pd.read_csv(path_2, header=1, usecols=[subject, subject + ".1", subject + ".2"]);
 df2.fillna(0, inplace=True);
 df2.replace('ab', 0, inplace=True);
 

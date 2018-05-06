@@ -71,16 +71,20 @@ def ewma_forecast(data, window):
     return input_data[7:9];
 
 csv_file_1 = "Southland - Performance.csv";
-csv_file_2 = "Sirisaman - Perfomance.csv";
+csv_file_2 = "Sirisaman - Performance.csv";
 
-subject = "Science"
+path_1 = "/home/wolfpack/FYP/DDIS/Data/" + csv_file_1;
+path_2 = "/home/wolfpack/FYP/DDIS/Data/" + csv_file_2;
+
+
+subject = "History"
 
 # reading the csv file and selecting subject columns
-df1 = pd.read_csv(csv_file_1, header=1, usecols=["Index No.",subject, subject + ".1", subject + ".2", subject + ".3", subject + ".4", subject + ".5", subject + ".6", subject + ".7", subject + ".8"]);
+df1 = pd.read_csv(path_1, header=1, usecols=["Index No.",subject, subject + ".1", subject + ".2", subject + ".3", subject + ".4", subject + ".5", subject + ".6", subject + ".7", subject + ".8"]);
 df1.fillna(0, inplace=True);
 df1.replace('ab', 0, inplace=True);
 
-df2 = pd.read_csv(csv_file_2, header=1, usecols=["Index No.",subject, subject + ".1", subject + ".2", subject + ".3", subject + ".4", subject + ".5", subject + ".6", subject + ".7", subject + ".8"]);
+df2 = pd.read_csv(path_2, header=1, usecols=["Index No.",subject, subject + ".1", subject + ".2", subject + ".3", subject + ".4", subject + ".5", subject + ".6", subject + ".7", subject + ".8"]);
 df2.fillna(0, inplace=True);
 df2.replace('ab', 0, inplace=True);
 
@@ -90,7 +94,7 @@ np_marks_array_2 = df2.as_matrix().astype(float);
 
 input_marks = np.append(np_marks_array_1, np_marks_array_2, axis=0);
 
-index = 321;
+index = 232;
 
 train_data = input_marks[index][1:8];
 test_data = input_marks[index][8:10];
