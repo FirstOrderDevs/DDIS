@@ -23,16 +23,6 @@ def order_calculator(array):
 
     return order;
 
-def auto_regressive_plot(train_data):
-
-    poly = PolynomialFeatures(degree=order_calculator(train_data));
-    poly_train = poly.fit_transform([[0],[1],[2],[3],[4],[5],[6]]);
-    poly_test = poly.fit_transform([[0],[1],[2],[3],[4],[5],[6],[7],[8]]);
-
-    poly_regr = linear_model.LinearRegression();
-    poly_regr.fit(poly_train, train_data);
-    return poly_regr.predict(poly_test);
-
 def auto_regressive_forecast(train_data):
 
     poly = PolynomialFeatures(degree=order_calculator(train_data));
@@ -66,8 +56,9 @@ def ewma_calculator(data, window):
 
 def ewma_forecast(data, window):
     input_data = deepcopy(data);
-    input_data[-2] = ewma_calculator(input_data, window)[-2];
-    input_data[-1] = ewma_calculator(input_data, window)[-1];
+    ewma_data = deepcopy(data);
+    input_data[-2] = ewma_calculator(ewma_data, window)[-2];
+    input_data[-1] = ewma_calculator(ewma_data, window)[-1];
     return input_data[7:9];
 
 csv_file_1 = "Southland - Performance.csv";
@@ -77,7 +68,7 @@ path_1 = "/home/wolfpack/FYP/DDIS/Data/" + csv_file_1;
 path_2 = "/home/wolfpack/FYP/DDIS/Data/" + csv_file_2;
 
 
-subject = "History"
+subject = "Maths"
 
 # reading the csv file and selecting subject columns
 df1 = pd.read_csv(path_1, header=1, usecols=["Index No.",subject, subject + ".1", subject + ".2", subject + ".3", subject + ".4", subject + ".5", subject + ".6", subject + ".7", subject + ".8"]);
@@ -94,7 +85,7 @@ np_marks_array_2 = df2.as_matrix().astype(float);
 
 input_marks = np.append(np_marks_array_1, np_marks_array_2, axis=0);
 
-index = 232;
+index = 131;
 
 train_data = input_marks[index][1:8];
 test_data = input_marks[index][8:10];

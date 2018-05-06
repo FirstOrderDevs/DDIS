@@ -99,6 +99,7 @@ ENV/
 #folders
 
 /Data
+/.idea
 /site
 
 # mypy
