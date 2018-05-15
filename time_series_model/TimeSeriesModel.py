@@ -68,7 +68,7 @@ path_1 = "/home/wolfpack/FYP/DDIS/Data/" + csv_file_1;
 path_2 = "/home/wolfpack/FYP/DDIS/Data/" + csv_file_2;
 
 
-subject = "Maths"
+subject = "English"
 
 # reading the csv file and selecting subject columns
 df1 = pd.read_csv(path_1, header=1, usecols=["Index No.",subject, subject + ".1", subject + ".2", subject + ".3", subject + ".4", subject + ".5", subject + ".6", subject + ".7", subject + ".8"]);
@@ -85,7 +85,7 @@ np_marks_array_2 = df2.as_matrix().astype(float);
 
 input_marks = np.append(np_marks_array_1, np_marks_array_2, axis=0);
 
-index = 131;
+index = 253;
 
 train_data = input_marks[index][1:8];
 test_data = input_marks[index][8:10];
@@ -107,7 +107,7 @@ plt.plot([8,9], forecast_data, color='green',label='Forecast Data');
 plt.xlabel("Index "+ str(int(input_marks[index][0])));
 plt.ylabel(subject+" Marks");
 
-plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+plt.legend()
 
 plt.show();
 

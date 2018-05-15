@@ -3,6 +3,7 @@ import numpy as np
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error
 import pandas as pd
+from data_parser import DataParser
 
 csv_file_1 = "Southland - Performance.csv";
 csv_file_2 = "Sirisaman - Performance.csv";
