@@ -153,6 +153,7 @@ sub_means_grades= [['Religon_6_Mean','Sinhala_6_Mean','English_6_Mean','Maths_6_
             ['Religon_7_Mean','Sinhala_7_Mean','English_7_Mean','Maths_7_Mean','Science_7_Mean','History_7_Mean','CE_7_Mean','Health_7_Mean','Tamil_7_Mean','Geography_7_Mean','PTS_7_Mean','Art_7_Mean'],
             ['Religon_8_Mean','Sinhala_8_Mean','English_8_Mean','Maths_8_Mean','Science_8_Mean','History_8_Mean','CE_8_Mean','Health_8_Mean','Tamil_8_Mean','Geography_8_Mean','PTS_8_Mean','Art_8_Mean']]
 
+
 Grades = ['Grade 6','Grade 7','Grade 8']
 for sub_means in sub_means_grades:
     r_values = []
