@@ -1,6 +1,36 @@
-import pandas as pd;
+import pandas as pd
+from score_calculators import ScoreCalculator as sc
+import os
 
-def get_marks_dataframe(subjects, schools, terms = [1,2,3,4,5,6,7,8,9], index = 'no'):
+def get_all(schools=["sirisaman","southland"]):
+    """
+        Returns a data frame with all the features for given schools
+    """
+    dirname = os.path.dirname(__file__)
+
+    files = [];
+
+    for school in schools:
+        files.append(school + "_full.csv");
+
+    path = os.path.join(dirname, "../Data/");
+
+    dataframes = [];
+
+    for file in files:
+
+        df = pd.read_csv(path+file);
+
+        dataframes.append(df);
+
+    merged_df = dataframes[0];
+
+    for dataframe in dataframes[1:]:
+        merged_df = merged_df.append(dataframe);
+
+    return merged_df;
+
+def get_marks(subjects, schools=["sirisaman","southland"], terms = [1,2,3,4,5,6,7,8,9], index = "yes"):
 
     """
     Returns a data frame with marks for given subjects and terms for given schools
@@ -13,13 +43,14 @@ def get_marks_dataframe(subjects, schools, terms = [1,2,3,4,5,6,7,8,9], index = 
                 if not specified return marks for all the terms.
         index : {'yes','no'} adds index number of the student for the data frame
     """
+    dirname = os.path.dirname(__file__)
 
     files = [];
 
     for school in schools:
-        files.append(school + " - Performance.csv");
+        files.append(school + "_full.csv");
 
-    path = "/home/wolfpack/FYP/DDIS/Data/"
+    path = os.path.join(dirname, "../Data/");
 
     if(index == 'yes'):
         columns = ['Index No.'];
@@ -39,7 +70,7 @@ def get_marks_dataframe(subjects, schools, terms = [1,2,3,4,5,6,7,8,9], index = 
 
     for file in files:
 
-        df = pd.read_csv(path+file, header=1, usecols=columns);
+        df = pd.read_csv(path+file, usecols=columns);
 
         dataframes.append(df);
 
@@ -50,7 +81,28 @@ def get_marks_dataframe(subjects, schools, terms = [1,2,3,4,5,6,7,8,9], index = 
 
     return merged_df;
 
-def handle_absent(dataframe, how='fill_0'):
+def get_demographics(schools=["sirisaman","southland"],features=["scholarship","f_edu","m_edu","s_num","s_edu","tution"], index="yes"):
+    df = get_all(schools);
+
+    if (index == "yes"):
+        features.insert(0,"Index No.");
+
+    return  df[features];
+
+def get_lci(schools=["sirisaman","southland"], index="yes"):
+    df = get_all(schools);
+
+    features = []
+
+    if(index == "yes"):
+        features=["Index No."];
+
+    for i in range(1,21):
+        features.append("Lci_"+str(i));
+
+    return  df[features];
+
+def handle_missing_values(dataframe, how='0', is_nan = False):
 
     """
     Manages absent values in a data frame
@@ -60,38 +112,13 @@ def handle_absent(dataframe, how='fill_0'):
         dataframe : dataframe to be modified
         how : {'fill_0', 'fill_prev_avg', 'fill_this_avg', 'drop'}
     """
+    if(not(is_nan)):
 
-    if(how == 'fill_0'):
-         dataframe.replace('ab', 0, inplace=True);
+        if(how == '0'):
+             dataframe.replace(-1, 0, inplace=True);
 
-#     elif(how == 'fill_prev_avg'):
-#         # put previous average here for the subject
-#
-#     elif(how == 'fill_this_avg'):
-#         # put average mark for this term
-#
-    elif(how == 'drop'):
-         columns = list(dataframe.columns.values);
-
-         for column in columns:
-            dataframe = dataframe[dataframe[column] != 0]
-
-    return dataframe;
-
-
-def handle_nan(dataframe, how='fill_0'):
-
-    """
-        Manages nan values in a data frame
-
-        Parameters
-            ----------
-            dataframe : dataframe to be modified
-            how : {'fill_0', 'fill_prev_avg', 'fill_this_avg', 'drop'}
-        """
-
-    if (how == 'fill_0'):
-        dataframe.fillna(0, inplace=True);
+        elif(how == '?'):
+            dataframe.replace(-1, '?', inplace=True);
 
     #     elif(how == 'fill_prev_avg'):
     #         # put previous average here for the subject
@@ -99,7 +126,60 @@ def handle_nan(dataframe, how='fill_0'):
     #     elif(how == 'fill_this_avg'):
     #         # put average mark for this term
     #
-    elif (how == 'drop'):
-        dataframe.dropna(inplace=True);
+        elif(how == 'drop'):
+             columns = list(dataframe.columns.values);
+
+             for column in columns:
+                dataframe = dataframe[dataframe[column] != 0]
+
+    else :
+
+        if (how == '0'):
+            dataframe.fillna(0, inplace=True);
+
+        elif (how == '-1'):
+            dataframe.fillna(-1, inplace=True);
+
+        elif (how == '?'):
+            dataframe.fillna('?', inplace=True);
+            # dataframe.astype(object).fillna('?', inplace=True);
+
+        #     elif(how == 'fill_prev_avg'):
+        #         # put previous average here for the subject
+        #
+        #     elif(how == 'fill_this_avg'):
+        #         # put average mark for this term
+        #
+        elif (how == 'drop'):
+            dataframe.dropna(inplace=True);
 
     return dataframe;
+
+def generate_dataset_orange(subject):
+
+    features = ["Index No.", subject, subject + ".1", subject + ".2", subject + ".3", subject + ".4", subject + ".5",
+                subject + ".6",
+                subject + ".7", subject + ".8", "scholarship", "f_edu", "m_edu", "s_num", "s_edu", "tution", ]
+
+    for i in range(1, 21):
+        features.append("Lci_" + str(i));
+
+    df = get_all()[features];
+    df = handle_missing_values(df, '?');
+    df = handle_missing_values(df, '?', is_nan=True);
+
+    tution_score = sc.getTutionScore(df, subject);
+    sibiling_score = sc.getSibilingEducationScore(df);
+
+    tution_score_series = pd.Series(tution_score);
+    sibiling_score_series = pd.Series(sibiling_score);
+
+    df["tution"] = tution_score_series;
+    df["s_edu"] = sibiling_score_series;
+
+    df.to_csv('out.csv')
+
+def isNaN(val):
+    return val != val;
+
+generate_dataset_orange(subject="Mathematics");

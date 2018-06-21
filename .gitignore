@@ -101,6 +101,7 @@ ENV/
 /Data
 /.idea
 /site
+/.spyproject
 
 # mypy
 .mypy_cache/
