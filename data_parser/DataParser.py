@@ -155,7 +155,7 @@ def handle_missing_values(dataframe, how='0', is_nan = False):
 
     return dataframe;
 
-def generate_dataset_orange(subject):
+def generate_dataset_orange(subject, tution_score = "no"):
 
     features = ["Index No.", subject, subject + ".1", subject + ".2", subject + ".3", subject + ".4", subject + ".5",
                 subject + ".6",
@@ -168,18 +168,23 @@ def generate_dataset_orange(subject):
     df = handle_missing_values(df, '?');
     df = handle_missing_values(df, '?', is_nan=True);
 
-    tution_score = sc.getTutionScore(df, subject);
+    if(tution_score == "yes"):
+        tution_score = sc.getTutionScore(df, subject);
+        tution_score_series = pd.Series(tution_score);
+        df["tution"] = tution_score_series;
+
+    else:
+        tution_category = sc.getTutionCategory(df, subject);
+        tution_category_series = pd.Series(tution_category);
+        df["tution"] = tution_category_series;
+
     sibiling_score = sc.getSibilingEducationScore(df);
-
-    tution_score_series = pd.Series(tution_score);
     sibiling_score_series = pd.Series(sibiling_score);
-
-    df["tution"] = tution_score_series;
     df["s_edu"] = sibiling_score_series;
 
     df.to_csv('out.csv')
 
 def isNaN(val):
-    return val != val;
+    return val != val
 
-generate_dataset_orange(subject="Mathematics");
+generate_dataset_orange(subject="Mathematics",tution_score = "no")

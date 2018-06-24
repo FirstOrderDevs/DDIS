@@ -57,3 +57,34 @@ def getSibilingEducationScore(dataframe):
 
 def getExtraActivitiesScore(dataframe):
     return 0;
+
+def getTutionCategory(dataframe, subject):
+    categories = []
+    tution_list = dataframe["tution"]
+    tution_list = tution_list.tolist()
+
+    for entry in tution_list:
+        category = "0"
+
+        if(entry != '?'):
+            entry = entry.split(",")
+
+            for sub in entry:
+
+                if(sub.strip()[:2].lower() == subject[:2].lower()):
+                    if(len(sub.split("_"))>1):
+                        category = sub.split("_")[-1]
+
+                else:
+                    continue
+
+            categories.append(category)
+
+        else:
+            categories.append(category)
+
+    return categories
+
+
+def getExtraActivitiesCategory(dataframe):
+    return 0;
