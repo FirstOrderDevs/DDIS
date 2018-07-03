@@ -1,5 +1,6 @@
 import pandas as pd
 from score_calculators import ScoreCalculator as sc
+from imblearn.over_sampling import SMOTE
 import os
 
 def get_all(schools=["sirisaman","southland"]):
@@ -155,11 +156,41 @@ def handle_missing_values(dataframe, how='0', is_nan = False):
 
     return dataframe;
 
-def generate_dataset_orange(subject, tution_score = "no"):
+def discretize_marks(dataframe, subject):
+
+    subjects = [subject];
+
+    for i in range(1,9):
+        subjects.append(subject+"."+str(i))
+
+    for sub in subjects:
+        grades=[]
+        marks = dataframe[sub]
+        for val in marks:
+            if val != '?':
+                if val >= 75:
+                    grades.append('A')
+                elif (val < 75 and val >= 65):
+                    grades.append('B')
+                elif (val < 65 and val >= 55):
+                    grades.append('C')
+                elif (val < 55 and val >=40):
+                    grades.append('S')
+                elif (val < 40 and val >= 0):
+                    grades.append('F')
+                    
+        grade_series = pd.Series(grades)
+        dataframe[sub] = grade_series
+
+    return dataframe;
+
+
+
+def generate_dataset_orange(subject, tution_score = "no", discretize = 'no'):
 
     features = ["Index No.", subject, subject + ".1", subject + ".2", subject + ".3", subject + ".4", subject + ".5",
-                subject + ".6",
-                subject + ".7", subject + ".8", "scholarship", "f_edu", "m_edu", "s_num", "s_edu", "tution", ]
+                subject + ".6", subject + ".7", subject + ".8", "scholarship", "f_edu", "m_edu", "s_num", "s_edu",
+                "tution", ]
 
     for i in range(1, 21):
         features.append("Lci_" + str(i));
@@ -174,17 +205,25 @@ def generate_dataset_orange(subject, tution_score = "no"):
         df["tution"] = tution_score_series;
 
     else:
-        tution_category = sc.getTutionCategory(df, subject);
-        tution_category_series = pd.Series(tution_category);
-        df["tution"] = tution_category_series;
+        tution_category = sc.getTutionCategory(df, subject)
+        tution_category_series = pd.Series(tution_category)
+        df["tution"] = tution_category_series
 
     sibiling_score = sc.getSibilingEducationScore(df);
     sibiling_score_series = pd.Series(sibiling_score);
     df["s_edu"] = sibiling_score_series;
 
-    df.to_csv('out.csv')
+    if(discretize == 'yes'):
+        df = discretize_marks(df,subject)
+        df.to_csv('out_dec.csv')
+    else:
+        df.to_csv('out.csv')
 
 def isNaN(val):
     return val != val
 
-generate_dataset_orange(subject="Mathematics",tution_score = "no")
+generate_dataset_orange(subject="Mathematics",tution_score = "no", discretize="yes")
+generate_dataset_orange(subject="Mathematics",tution_score = "no", discretize="no")
+    
+            
+
