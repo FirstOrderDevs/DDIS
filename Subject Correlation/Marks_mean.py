@@ -77,7 +77,7 @@ marks_mean_8 = pd.DataFrame()
 
 marks_mean_6['Religion'] = Religon_6_mean.mean(axis=1)
 marks_mean_6['First Language'] = Sinhala_6_mean.mean(axis=1)
-marks_mean_6['Foriegn Language'] = English_6_mean.mean(axis=1)
+marks_mean_6['English Language'] = English_6_mean.mean(axis=1)
 marks_mean_6['Mathematics'] = Maths_6_mean.mean(axis=1)
 marks_mean_6['Science'] = Science_6_mean.mean(axis=1)
 marks_mean_6['History'] = History_6_mean.mean(axis=1)
@@ -91,7 +91,7 @@ marks_mean_6['Art'] = Art_6_mean.mean(axis=1)
 
 marks_mean_7['Religion'] = Religon_7_mean.mean(axis=1)
 marks_mean_7['First Language'] = Sinhala_7_mean.mean(axis=1)
-marks_mean_7['Foriegn Language'] = English_7_mean.mean(axis=1)
+marks_mean_7['English Language'] = English_7_mean.mean(axis=1)
 marks_mean_7['Mathematics'] = Maths_7_mean.mean(axis=1)
 marks_mean_7['Science'] = Science_7_mean.mean(axis=1)
 marks_mean_7['History'] = History_7_mean.mean(axis=1)
@@ -104,7 +104,7 @@ marks_mean_7['Art'] = Art_7_mean.mean(axis=1)
 
 marks_mean_8['Religion'] = Religon_8_mean.mean(axis=1)
 marks_mean_8['First Language'] = Sinhala_8_mean.mean(axis=1)
-marks_mean_8['English'] = English_8_mean.mean(axis=1)
+marks_mean_8['English Language'] = English_8_mean.mean(axis=1)
 marks_mean_8['Mathematics'] = Maths_8_mean.mean(axis=1)
 marks_mean_8['Science'] = Science_8_mean.mean(axis=1)
 marks_mean_8['History'] = History_8_mean.mean(axis=1)
@@ -115,9 +115,25 @@ marks_mean_8['Geography'] = Geography_8_mean.mean(axis=1)
 marks_mean_8['PTS'] = PTS_8_mean.mean(axis=1)
 marks_mean_8['Art'] = Art_8_mean.mean(axis=1)
 
+col_all = marks_all.columns
+marks_mean = pd.DataFrame()
+for i in range(int(len(col_all)/9)):
+    sub = col_all[i*9].split(".")[0]
+    if (sub[0:3] == "Eng"):
+         marks_mean["English Language"] = marks_all[col_all[i*9:(i*9)+9]].mean(axis=1)
+    elif (sub[0:3] == "Sin"):
+         marks_mean["First Language"] = marks_all[col_all[i*9:(i*9)+9]].mean(axis=1)
+    elif (sub[0:3] == "Tam"):
+         marks_mean["Second Language"] = marks_all[col_all[i*9:(i*9)+9]].mean(axis=1)
+    else:
+        marks_mean[str(sub)] = marks_all[col_all[i*9:(i*9)+9]].mean(axis=1)
+
+
 marks_mean_6.to_csv("marks_mean_grade_6.csv")
 marks_mean_7.to_csv("marks_mean_grade_7.csv")
 marks_mean_8.to_csv("marks_mean_grade_8.csv")
+
+marks_mean.to_csv("marks_mean.csv")
 
 
 
